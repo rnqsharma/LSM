@@ -30,3 +30,10 @@ message IndexEntry {
 message Index {
     repeated IndexEntry entries = 1;
 }
+
+message WALEntry {
+    string key = 1;
+    Command command = 2;
+    optional bytes value = 3;
+    int64 timestamp = 4;
+}

@@ -33,6 +33,26 @@ func (m *Memtable) Put(key string, value []byte) {
 	m.size += sizeChange
 }
 
+func (m *Memtable) Delete(key string) {
+	existingEntry := m.data.Get(key)
+	if existingEntry != nil {
+		m.size -= int64(len(existingEntry.Value.(*LSMEntry).Value))
+	} else {
+		m.size += int64(len(key))
+	}
+	m.data.Set(key, getLSMEntry(key, nil, Command_DELETE))
+}
+
+func (m *Memtable) Get(key string) *LSMEntry {
+	value := m.data.Get(key)
+
+	if value == nil {
+		return nil
+	}
+
+	return value.Value.(*LSMEntry)
+}
+
 func getLSMEntry(key string, value *[]byte, command Command) *LSMEntry {
 	entry := &LSMEntry{
 		Key:       key,

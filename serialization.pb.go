@@ -286,6 +286,74 @@ func (x *Index) GetEntries() []*IndexEntry {
 	return nil
 }
 
+type WALEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Command       Command                `protobuf:"varint,2,opt,name=command,proto3,enum=grpcapi.Command" json:"command,omitempty"`
+	Value         []byte                 `protobuf:"bytes,3,opt,name=value,proto3,oneof" json:"value,omitempty"`
+	Timestamp     int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WALEntry) Reset() {
+	*x = WALEntry{}
+	mi := &file_serialization_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WALEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WALEntry) ProtoMessage() {}
+
+func (x *WALEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_serialization_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WALEntry.ProtoReflect.Descriptor instead.
+func (*WALEntry) Descriptor() ([]byte, []int) {
+	return file_serialization_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *WALEntry) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *WALEntry) GetCommand() Command {
+	if x != nil {
+		return x.Command
+	}
+	return Command_PUT
+}
+
+func (x *WALEntry) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+func (x *WALEntry) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 var File_serialization_proto protoreflect.FileDescriptor
 
 const file_serialization_proto_rawDesc = "" +
@@ -305,7 +373,13 @@ const file_serialization_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\"6\n" +
 	"\x05Index\x12-\n" +
-	"\aentries\x18\x01 \x03(\v2\x13.grpcapi.IndexEntryR\aentries*-\n" +
+	"\aentries\x18\x01 \x03(\v2\x13.grpcapi.IndexEntryR\aentries\"\x8b\x01\n" +
+	"\bWALEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12*\n" +
+	"\acommand\x18\x02 \x01(\x0e2\x10.grpcapi.CommandR\acommand\x12\x19\n" +
+	"\x05value\x18\x03 \x01(\fH\x00R\x05value\x88\x01\x01\x12\x1c\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestampB\b\n" +
+	"\x06_value*-\n" +
 	"\aCommand\x12\a\n" +
 	"\x03PUT\x10\x00\x12\n" +
 	"\n" +
@@ -325,22 +399,24 @@ func file_serialization_proto_rawDescGZIP() []byte {
 }
 
 var file_serialization_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_serialization_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_serialization_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_serialization_proto_goTypes = []any{
 	(Command)(0),        // 0: grpcapi.Command
 	(*LSMEntry)(nil),    // 1: grpcapi.LSMEntry
 	(*BloomFilter)(nil), // 2: grpcapi.BloomFilter
 	(*IndexEntry)(nil),  // 3: grpcapi.IndexEntry
 	(*Index)(nil),       // 4: grpcapi.Index
+	(*WALEntry)(nil),    // 5: grpcapi.WALEntry
 }
 var file_serialization_proto_depIdxs = []int32{
 	0, // 0: grpcapi.LSMEntry.command:type_name -> grpcapi.Command
 	3, // 1: grpcapi.Index.entries:type_name -> grpcapi.IndexEntry
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 2: grpcapi.WALEntry.command:type_name -> grpcapi.Command
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_serialization_proto_init() }
@@ -349,13 +425,14 @@ func file_serialization_proto_init() {
 		return
 	}
 	file_serialization_proto_msgTypes[0].OneofWrappers = []any{}
+	file_serialization_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_serialization_proto_rawDesc), len(file_serialization_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
