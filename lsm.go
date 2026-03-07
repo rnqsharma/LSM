@@ -294,7 +294,7 @@ func (l *LSMTree) compactLevel(compactionCandidate int) error {
 
 	l.levels[compactionCandidate].mu.RLock()
 
-	if len(l.levels[compactionCandidate].sstables) < maxLevelSSTables[idx] {
+	if len(l.levels[compactionCandidate].sstables) < maxLevelSSTables[compactionCandidate] {
 		l.levels[compactionCandidate].mu.RUnlock()
 		return nil
 	}
@@ -333,6 +333,21 @@ func (l *LSMTree) getSSTableHandlesAtLevel(level int) ([]*SSTable, []*SSTableIte
 		}
 	}
 	return sstables, iterators
+}
+
+func (l *LSMTree) mergeSSTables(iterators []*SSTableIterator, targetLevel int) (*SSTable, error) {
+	mergedEntries := mergeIterators(iterators)
+
+}
+
+func (l *LSMTree) getSequenceNumber(filename string) uint64 {
+	// directory + "/" + sstable_ + level (single digit) + _ + 1
+	sequenceStr := filename[len(l.directory)+1+2+len(SSTableFilePrefix):]
+	sequence, err := strconv.ParseUint(sequenceStr, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return sequence
 }
 
 // ----------------- utilities -----------------
